@@ -26,6 +26,12 @@ jobs:
           push: true
           file: ./development/Dockerfile.python311
           tags: torbendury/python-dev:3.11-${{ steps.pre-step.outputs.release_tag }},torbendury/python-dev:latest
+      - name: Build and push Python Data Analysis Image
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          file: ./development/Dockerfile.python311-analysis
+          tags: torbendury/python-analysis:3.11-${{ steps.pre-step.outputs.release_tag }},torbendury/python-analysis:latest
       - name: Build and push Golang
         uses: docker/build-push-action@v3
         with:
