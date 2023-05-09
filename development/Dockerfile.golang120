@@ -1,0 +1,29 @@
+##########################################################
+FROM golang:1.20.4-bullseye as build
+
+##########################################################
+# least privilege user with some convenience alias
+RUN groupadd -g 999 go && \
+    useradd -m -r -u 999 -g go go
+RUN echo "alias ll='ls -shalF'" >> /home/go/.bashrc
+
+
+##########################################################
+# Environment Variables
+ENV APP_HOME /app
+ENV TERM xterm-256color
+
+##########################################################
+# update base image and install dependencies
+RUN apt update && apt upgrade -y
+RUN apt install -y \
+    curl \
+    wget \
+    iputils-ping
+
+##########################################################
+# Prepare for User Environment
+USER 999
+WORKDIR ${APP_HOME}
+
+CMD ["/bin/bash"]

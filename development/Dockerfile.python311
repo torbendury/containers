@@ -1,0 +1,32 @@
+##########################################################
+FROM python:3.11-slim as build
+
+##########################################################
+# least privilege user with some convenience alias
+RUN groupadd -g 999 python && \
+    useradd -m -r -u 999 -g python python
+RUN echo "alias ll='ls -shalF'" >> /home/python/.bashrc
+RUN echo "alias py='python'" >> /home/python/.bashrc
+
+
+##########################################################
+# Environment Variables
+ENV APP_HOME /app
+ENV PYTHONUNBUFFERED TRUE
+ENV TERM xterm-256color
+
+##########################################################
+# update base image and install dependencies
+RUN apt update && apt upgrade -y
+RUN apt install -y \
+    curl \
+    wget \
+    iputils-ping
+RUN pip install --upgrade pip
+
+##########################################################
+# Prepare for User Environment
+USER 999
+WORKDIR ${APP_HOME}
+
+CMD ["/bin/bash"]
