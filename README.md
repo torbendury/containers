@@ -4,12 +4,26 @@
 
 A tiny, tidy repository for keeping my image manifests. Mainly used for development and base-image builds.
 
-## development
+## Available Images
 
-- Python
-- Golang
+```bash
+# PYTHON development container
+docker run -ti --rm --name python torbendury/python-dev:latest
+# PYTHON analysis container
+docker run -ti --rm --name python torbendury/python-analysis:latest
+# GOLANG development container
+docker run -ti --rm --name golang torbendury/golang-dev:latest
+```
 
-## base-images
+### development
+
+- Python 3.11
+  - including an image for data analysis that comes with several tools pre-installed
+- Golang 1.20.4
+
+### base-images
+
+TO BE DONE!
 
 - Python
 - Golang
