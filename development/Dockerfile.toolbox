@@ -1,0 +1,39 @@
+FROM debian:bullseye
+
+##########################################################
+# least privilege user with some convenience alias
+RUN groupadd -g 999 toolbox && \
+    useradd -m -r -u 999 -g toolbox toolbox
+RUN echo "alias ll='ls -shalF'" >> /home/toolbox/.bashrc
+RUN echo "alias py='python'" >> /home/toolbox/.bashrc
+
+
+##########################################################
+# Environment Variables
+ENV PYTHONUNBUFFERED TRUE
+ENV TERM xterm-256color
+
+##########################################################
+# upgrade existing packages and libraries
+RUN apt update && apt upgrade -y
+RUN apt install -y curl apt-transport-https ca-certificates gnupg lsb-release unzip zip
+
+##########################################################
+# add third party repositories for convenience
+# kubectl
+RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+RUN echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list
+# gcloud
+RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | tee /usr/share/keyrings/cloud.google.gpg && apt-get update -y && apt-get install RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | tee /usr/share/keyrings/cloud.google.gpg
+# az
+RUN mkdir -p /etc/apt/keyrings
+RUN curl -sLS https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/keyrings/microsoft.gpg > /dev/null
+RUN chmod go+r /etc/apt/keyrings/microsoft.gpg
+RUN AZ_REPO=$(lsb_release -cs) echo "deb [arch=`dpkg --print-architecture` signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/azure-cli.list
+# helm
+RUN curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | tee /usr/share/keyrings/helm.gpg > /dev/null
+RUN  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list
+# TODO: install AWS cli - unfortunately they don't seem to maintain a repo
+
+RUN apt update
+RUN apt install -y kubectl google-cloud-cli azure-cli helm
