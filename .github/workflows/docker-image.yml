@@ -38,3 +38,9 @@ jobs:
           push: true
           file: ./development/Dockerfile.golang120
           tags: torbendury/golang-dev:1.20.4-${{ steps.pre-step.outputs.release_tag }},torbendury/golang-dev:latest
+      - name: Build and push Toolbox
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          file: ./development/Dockerfile.toolbox
+          tags: torbendury/toolbox:${{ steps.pre-step.outputs.release_tag }},torbendury/toolbox:latest
