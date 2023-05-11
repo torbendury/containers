@@ -19,7 +19,8 @@ RUN apt update && apt upgrade -y
 RUN apt install -y \
     curl \
     wget \
-    iputils-ping
+    iputils-ping \
+    protobuf-compiler
 
 ##########################################################
 # Prepare for User Environment
